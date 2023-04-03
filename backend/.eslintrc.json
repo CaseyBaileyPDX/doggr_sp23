@@ -1,0 +1,59 @@
+{
+  "env": {
+    "browser": false,
+    "node": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    // This is so that we can use promisify on Node's http methods
+    "default-param-last": "off",
+    // Easier grading rules
+    "newline-per-chained-call": "error",
+    "max-len": [
+      "error",
+      {
+        "code": 120
+      }
+    ],
+    "indent": [
+      "error",
+      "tab",
+      {
+        "ignoredNodes": [
+          "PropertyDefinition"
+        ],
+        "SwitchCase": 1
+      }
+    ],
+    "no-mixed-spaces-and-tabs": "off",
+    "semi": "error",
+
+    // These flip based on dev convenience vs prod safety
+    // Comment out everything below before building prod
+    "no-console": "off",
+    "consistent-return": "off",
+    //"no-unused-vars": "off",
+    "quotes": "off",
+    "@typescript-eslint/quotes": "off",
+    "@typescript-eslint/unused-import": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-default-export": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-inferrable-types": "off",
+    "@typescript-eslint/no-implicit-any": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "import/no-extraneous-dependencies": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "no-return-await": "error"
+  }
+}
