@@ -2,3 +2,5 @@
 .idea/
 .code/
 temp/
+!/backend/.env
+node_modules/
