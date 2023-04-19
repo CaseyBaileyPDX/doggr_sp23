@@ -34,7 +34,7 @@
         "SwitchCase": 1
       }
     ],
-    "no-mixed-spaces-and-tabs": "error",
+    "no-mixed-spaces-and-tabs": "off",
     "semi": "error",
 
     // These flip based on dev convenience vs prod safety
