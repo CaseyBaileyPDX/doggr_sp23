@@ -5,13 +5,36 @@ services:
     image: postgres:15-alpine
     restart: always
     ports:
-      - "5432:5432" 
+      - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=doggr
       - POSTGRES_PASSWORD=doggr
       - POSTGRES_DB=doggr
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U doggr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    container_name: backend
+    build: ./backend/
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=doggr
+      - DB_USER=doggr
+      - DB_PASS=doggr
+      - PORT=8080
+      - HOST=0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   db:
