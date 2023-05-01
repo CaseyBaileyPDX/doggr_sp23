@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+	"paths": {
+	  "@/*": ["src/*"],
+	  "@css/*": ["src/assets/css/*"],
+	  "@images/*": ["src/assets/images/*"]
+	},
+	"target": "ESNext",
+	"lib": ["DOM", "DOM.Iterable", "ESNext"],
+	"module": "ESNext",
+	"baseUrl": "./",
+	"skipLibCheck": true,
+	"allowJs": true,
+	/* Bundler mode */
+	"moduleResolution": "bundler",
+	"allowImportingTsExtensions": true,
+	"resolveJsonModule": true,
+	"isolatedModules": true,
+	"noEmit": true,
+	"jsx": "react-jsx",
+	/* Linting */
+	"strict": false,
+	"noUnusedLocals": false,
+	"noUnusedParameters": false,
+	"noFallthroughCasesInSwitch": true
+  },
+  "include": [
+	"src/**/*.ts",
+	"src/**/*.d.ts",
+	"src/**/*.tsx",
+	"test/**/*.ts",
+	"node_modules/.pnpm/cypress@12.11.0/node_modules/cypress/types/cypress-global-vars.d.ts"
+  ],
+  "outDir": "./build",
+  "references": [{"path": "./tsconfig.vite.json"}]
+}

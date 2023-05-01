@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --no-warnings=ExperimentalWarning src/index.ts",
+    "fmt": "prettier --write .",
     "lint": "eslint . --ext .ts",
+    "check": "pnpm fmt && pnpm lint",
     "test": "NODE_NO_WARNINGS=1 tap test/",
     "build": "tsc -p tsconfig.json",
     "start": "node build/index.js",
@@ -18,7 +20,8 @@
     "migration:down": "pnpm mikro-orm-esm migration:down",
     "seed:run": "pnpm mikro-orm-esm seeder:run",
     "db:reset": "pnpm schema:drop && pnpm schema:update && pnpm seed:run",
-    "startProd": "pnpm migration:up && pnpm start"
+    "startProd": "pnpm migration:up && pnpm start",
+    "docs:generate": "rimraf ./doc/ && typedoc --options typedoc.json --plugin typedoc-plugin-merge-modules"
   },
   "scriptsComments": {
     "dev": "Runs watcher dev server, see https://github.com/nodejs/node/issues/30810#issuecomment-1446093458 for no-warnings",
@@ -51,10 +54,15 @@
     "@typescript-eslint/parser": "^5.59.0",
     "chai": "^4.3.7",
     "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
     "nodemon": "^2.0.22",
+    "prettier": "2.8.8",
+    "rimraf": "^5.0.0",
     "tap": "^16.3.4",
     "ts-morph": "^17.0.1",
     "ts-node": "^10.9.1",
+    "typedoc": "^0.24.6",
+    "typedoc-plugin-merge-modules": "^5.0.0",
     "typescript": "^5.0.4"
   },
   "mikro-orm": {
