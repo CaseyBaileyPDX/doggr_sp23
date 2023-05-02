@@ -1,23 +1,18 @@
-
-import { Entity, Property, Unique, ManyToOne } from "@mikro-orm/core";
+import { Entity, Property, ManyToOne } from "@mikro-orm/core";
 import { DoggrBaseEntity } from "./DoggrBaseEntity.js";
 import { User } from "./User.js";
 
-
 @Entity()
-export class Match {
+export class Message extends DoggrBaseEntity {
 
 	// The person who performed the match/swiped right
-	@ManyToOne({primary: true})
-	owner!: User;
+	@ManyToOne()
+	sender!: User;
 
 	// The account whose profile was swiped-right-on
-	@ManyToOne({primary: true})
-	matchee!: User;
+	@ManyToOne()
+	receiver!: User;
 
 	@Property()
-	created_at = new Date();
-
+	message!: string;
 }
-
-

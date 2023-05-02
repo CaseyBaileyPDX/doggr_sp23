@@ -1,9 +1,9 @@
 import { Entity, Property, Unique, OneToMany, Collection, Cascade } from "@mikro-orm/core";
-import { BaseEntity } from "./BaseEntity.js";
+import { DoggrBaseEntity } from "./DoggrBaseEntity.js";
 import { Match } from "./Match.js";
 
 @Entity({ tableName: "users"})
-export class User extends BaseEntity {	
+export class User extends DoggrBaseEntity {
 	@Property()
 	@Unique()
 	email!: string;

@@ -32,6 +32,8 @@ services:
       - DB_PASS=doggr
       - PORT=8080
       - HOST=0.0.0.0
+      - PASSWORD=password
+      - NODE_ENV=development
     depends_on:
       postgres:
         condition: service_healthy
