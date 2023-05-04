@@ -11,6 +11,7 @@ module.exports = {
 	plugins: ["react-refresh"],
 	rules: {
 		"react-refresh/only-export-components": "warn",
+		"semi": "error",
 		"default-param-last": "error",
 		"newline-per-chained-call": "error",
 		"no-return-await": "error",
