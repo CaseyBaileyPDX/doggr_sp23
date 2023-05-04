@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .env.ts
+doc/
+build/

@@ -7,13 +7,18 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "test": "pnpm vitest",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "fmt": "prettier --write .",
+    "lint": "eslint . --ext .ts",
+    "check": "pnpm fmt && pnpm lint",
     "preview": "vite preview",
-    "cypress:open":"cypress open"
+    "cypress:open": "cypress open",
+    "docs:generate": "rimraf ./doc/ && typedoc --options typedoc.json"
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "rimraf": "^5.0.0",
+    "typedoc": "^0.24.6"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.2.0",

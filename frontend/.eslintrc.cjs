@@ -8,10 +8,10 @@ module.exports = {
 	],
 	parser: "@typescript-eslint/parser",
 	parserOptions: { ecmaVersion: "latest", sourceType: "module" },
-	plugins: ["react-refresh"],
+	plugins: ["react-refresh", "@typescript-eslint"],
 	rules: {
 		"react-refresh/only-export-components": "warn",
-		"semi": "error",
+		semi: "error",
 		"default-param-last": "error",
 		"newline-per-chained-call": "error",
 		"no-return-await": "error",
