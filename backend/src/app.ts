@@ -1,10 +1,10 @@
 import Fastify from "fastify";
+import cors from '@fastify/cors'
 import { FastifyBadWordsPlugin } from "./plugins/badwords.js";
 import { FastifySearchHttpMethodPlugin } from "./plugins/http_search.js";
 import { FastifyMikroOrmPlugin } from "./plugins/mikro.js";
 import DoggrRoutes from "./routes/routes.js";
 import config from "./db/mikro-orm.config.js";
-
 
 const envToLogger = {
 	development: {
@@ -34,6 +34,10 @@ const envToLogger = {
 
 const app = Fastify({
 	logger: envToLogger[process.env.NODE_ENV]
+});
+
+await app.register(cors, {
+	origin: false
 });
 
 await app.register(FastifyMikroOrmPlugin, config);
