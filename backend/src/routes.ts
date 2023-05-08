@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { SOFT_DELETABLE_FILTER } from "mikro-orm-soft-delete";
 import { Match } from "./db/entities/Match.js";
 import { Message } from "./db/entities/Message.js";
 import { User } from "./db/entities/User.js";
@@ -24,8 +25,21 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 		return "hello";
 	});
 
+	// Route that returns all users, soft deleted and not
 	app.get("/dbTest", async (request: FastifyRequest, _reply: FastifyReply) => {
-		return request.em.find(User, {});
+		return request.em.find(User, {}, { filters: { [SOFT_DELETABLE_FILTER]: false } });
+	});
+
+	// Route that returns all users who ARE NOT SOFT DELETED
+	app.get("/users", async (req, reply) => {
+		try {
+			const theUser = await req.em.find(User, {});
+			app.log.info(theUser);
+			reply.send(theUser);
+		} catch (err) {
+			app.log.error(err);
+			reply.status(500).send(err);
+		}
 	});
 
 	// User CRUD

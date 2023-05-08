@@ -22,6 +22,7 @@ specifiers:
   eslint-config-prettier: ^8.8.0
   fastify: ^4.15.0
   fastify-plugin: ^4.5.0
+  mikro-orm-soft-delete: ^0.1.0
   nodemon: ^2.0.22
   pino-pretty: ^10.0.0
   prettier: 2.8.8
@@ -43,6 +44,7 @@ dependencies:
   dotenv: 16.0.3
   fastify: 4.17.0
   fastify-plugin: 4.5.0
+  mikro-orm-soft-delete: 0.1.0
 
 devDependencies:
   '@faker-js/faker': 7.6.0
@@ -2564,6 +2566,12 @@ packages:
       braces: 3.0.2
       picomatch: 2.3.1
 
+  /mikro-orm-soft-delete/0.1.0:
+    resolution: {integrity: sha512-61mWDgFh2TY6QWAowvwQrIFuWd12kxKwPL0d8OGTs9xZtnP1MqPWM0UY2KXSTHxTTgmVKZeWPpirJr8qGoYhNg==}
+    dependencies:
+      tslib: 2.5.0
+    dev: false
+
   /mikro-orm/5.7.4:
     resolution: {integrity: sha512-1j5k5u9Ip4w8rnvGhcGma/8fSJmSoQ3rb0sa+eehpFpFMBVYyHJ3Sqz19X8FjbRpQw0F7lhydoJUNfxQzFISWQ==}
     engines: {node: '>= 14.0.0'}
@@ -3585,6 +3593,10 @@ packages:
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
+
+  /tslib/2.5.0:
+    resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
+    dev: false
 
   /tsutils/3.21.0_typescript@5.0.4:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}

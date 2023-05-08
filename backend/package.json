@@ -17,16 +17,14 @@
     "schema:drop": "pnpm mikro-orm-esm schema:drop --run",
     "schema:fresh": "pnpm mikro-orm-esm schema:fresh",
     "schema:freshSeed": "pnpm mikro-orm-esm schema:fresh --seed",
-    "migration:fresh": "pnpm mikro-orm-esm migration:fresh",
-    "migration:freshSeed": "pnpm mikro-orm-esm migration:fresh --seed",
-    "seed:create": "pnpm mikro-orm-esm seeder:create ",
     "migration:create": "pnpm mikro-orm-esm migration:create --name ",
     "migration:up": "pnpm mikro-orm-esm migration:up",
     "migration:down": "pnpm mikro-orm-esm migration:down",
+    "migration:fresh": "pnpm mikro-orm-esm migration:fresh",
+    "migration:freshSeed": "pnpm mikro-orm-esm migration:fresh --seed",
+    "seed:create": "pnpm mikro-orm-esm seeder:create ",
     "seed:run": "pnpm mikro-orm-esm seeder:run",
-    "db:reset": "pnpm schema:drop && pnpm schema:update && pnpm seed:run",
-    "startProd": "pnpm migration:up && pnpm start",
-    "docs:generate": "rimraf ./doc/ && typedoc --options typedoc.json --plugin typedoc-plugin-merge-modules"
+    "startProd": "pnpm migration:fresh && pnpm start"
   },
   "scriptsComments": {
     "dev": "Runs watcher dev server, see https://github.com/nodejs/node/issues/30810#issuecomment-1446093458 for no-warnings",
@@ -47,7 +45,8 @@
     "axios": "^1.4.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.15.0",
-    "fastify-plugin": "^4.5.0"
+    "fastify-plugin": "^4.5.0",
+    "mikro-orm-soft-delete": "^0.1.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
