@@ -3,6 +3,14 @@ import { SoftDeletable } from "mikro-orm-soft-delete";
 import { DoggrBaseEntity } from "./DoggrBaseEntity.js";
 import { Match } from "./Match.js";
 
+import { Enum } from "@mikro-orm/core";
+import { Message } from "./Message.js";
+
+export enum UserRole {
+	ADMIN = 'Admin',
+	USER = 'User'
+}
+
 // https://github.com/TheNightmareX/mikro-orm-soft-delete
 // Yes it's really that easy.
 @SoftDeletable(() => User, "deleted_at", () => new Date())
@@ -13,10 +21,16 @@ export class User extends DoggrBaseEntity {
 	email!: string;
 	
 	@Property()
-	name!: string;
+	name!: string
+
+	@Property()
+	password!: string;
 
 	@Property()
 	petType!: string;
+
+	@Enum(() => UserRole)
+	role!: UserRole; // string enum
 
 	// Note that these DO NOT EXIST in the database itself!
 	@OneToMany(
@@ -33,9 +47,17 @@ export class User extends DoggrBaseEntity {
 	)
 	matched_by!: Collection<Match>;
 
-  /* HW 1 NOTE!  We do NOT add Messages here!  This is the reason
-   some of you needed Rel<> in your submission.  I gave an
-   exhaustive explanation in Discord here:
-   https://discord.com/channels/1092372291112931330/1092372291670786110/1103471051926667384
-  */
+	@OneToMany(
+		() => Message,
+		message => message.sender,
+		{cascade: [Cascade.PERSIST, Cascade.REMOVE], orphanRemoval: true}
+	)
+	messages_sent!: Collection<Message>;
+
+	@OneToMany(
+		() => Message,
+		message => message.receiver,
+		{cascade: [Cascade.PERSIST, Cascade.REMOVE], orphanRemoval: true}
+	)
+	messages_received!: Collection<Message>;
 }

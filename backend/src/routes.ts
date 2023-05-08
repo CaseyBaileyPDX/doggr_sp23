@@ -5,10 +5,10 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SOFT_DELETABLE_FILTER } from "mikro-orm-soft-delete";
 import { Match } from "./db/entities/Match.js";
 import { Message } from "./db/entities/Message.js";
-import { User } from "./db/entities/User.js";
+import { User, UserRole } from "./db/entities/User.js";
 import { ICreateMessage, ICreateUsersBody, IUpdateUsersBody } from "./types.js";
 
-const adminPassword = process.env.password;
+
 
 /** This function creates all backend routes for the site
  *
@@ -34,10 +34,8 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 	app.get("/users", async (req, reply) => {
 		try {
 			const theUser = await req.em.find(User, {});
-			app.log.info(theUser);
 			reply.send(theUser);
 		} catch (err) {
-			app.log.error(err);
 			reply.status(500).send(err);
 		}
 	});
@@ -45,19 +43,21 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 	// User CRUD
 	// Refactor note - We DO use email still for creation!  We can't know the ID yet
 	app.post<{ Body: ICreateUsersBody }>("/users", async (req, reply) => {
-		const { name, email, petType } = req.body;
+		const { name, email, password, petType } = req.body;
 
 		try {
 			const newUser = await req.em.create(User, {
 				name,
 				email,
+				password,
 				petType,
+				// We'll only create Admins manually!
+				role: UserRole.USER
 			});
 
 			await req.em.flush();
 			return reply.send(newUser);
 		} catch (err) {
-			app.log.error("Failed to create new user", err.message);
 			return reply.status(500).send({ message: err.message });
 		}
 	});
@@ -67,11 +67,9 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 		const { id } = req.body;
 
 		try {
-			const theUser = await req.em.findOne(User, id);
-			app.log.info(theUser);
+			const theUser = await req.em.findOneOrFail(User, id, {strict: true});
 			reply.send(theUser);
 		} catch (err) {
-			app.log.error(err);
 			reply.status(500).send(err);
 		}
 	});
@@ -80,32 +78,42 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 	app.put<{ Body: IUpdateUsersBody }>("/users", async (req, reply) => {
 		const { name, id, petType } = req.body;
 
-		const userToChange = await req.em.findOne(User, id);
+		const userToChange = await req.em.findOneOrFail(User, id, {strict: true});
 		userToChange.name = name;
 		userToChange.petType = petType;
 
 		// Reminder -- this is how we persist our JS object changes to the database itself
 		await req.em.flush();
-		app.log.info(userToChange);
 		reply.send(userToChange);
 	});
 
 	// DELETE
-	app.delete<{ Body: { id: number; password: string } }>("/users", async (req, reply) => {
-		const { id, password } = req.body;
-
-		if (adminPassword !== password) {
-			return reply.status(401).send();
-		}
+	app.delete<{ Body: { my_id: number; id_to_delete: number, password: string } }>("/users", async (req, reply) => {
+		const { my_id, id_to_delete, password } = req.body;
 
 		try {
-			const theUser = await req.em.findOneOrFail(User, id);
+			// Authenticate my user's role
+			const me = await req.em.findOneOrFail(User, my_id, {strict: true});
+			// Check passwords match
+			if (me.password !== password) {
+				return reply.status(401).send();
+			}
 
-			await req.em.remove(theUser).flush();
-			app.log.info(theUser);
-			return reply.send(theUser);
+			// Make sure the requester is an Admin
+			if (me.role === UserRole.USER) {
+				return reply.status(401).send({ "message": "You are not an admin!"})
+			}
+
+			const theUserToDelete = await req.em.findOneOrFail(User, id_to_delete, {strict: true});
+
+			//Make sure the to-be-deleted user isn't an admin
+			if (theUserToDelete.role === UserRole.ADMIN) {
+				return reply.status(401).send({ "message": "You do not have enough privileges to delete an Admin!"})
+			}
+
+			await req.em.remove(theUserToDelete).flush();
+			return reply.send(theUserToDelete);
 		} catch (err) {
-			app.log.error(err);
 			return reply.status(500).send(err);
 		}
 	});
@@ -136,7 +144,6 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 			// send the match back to the user
 			return reply.send(newMatch);
 		} catch (err) {
-			app.log.error(err);
 			return reply.status(500).send(err);
 		}
 	});
@@ -196,7 +203,6 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 			// Let the user know everything went fine
 			return reply.send(newMessage);
 		} catch (err) {
-			app.log.error("Failed to create new message", err.message);
 			return reply.status(500).send({ message: err.message });
 		}
 	});
@@ -209,7 +215,6 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 			const messages = await req.em.find(Message, { receiver: receiverEntity });
 			return reply.send(messages);
 		} catch (err) {
-			app.log.error("Failed to find received message", err.message);
 			return reply.status(500).send({ message: err.message });
 		}
 	});
@@ -222,7 +227,6 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 			const messages = await req.em.find(Message, { sender: senderEntity });
 			return reply.send(messages);
 		} catch (err) {
-			app.log.error("Failed to find sent messages", err.message);
 			return reply.status(500).send({ message: err.message });
 		}
 	});
@@ -231,54 +235,57 @@ async function DoggrRoutes(app: FastifyInstance, _options = {}) {
 		const { message_id, message } = req.body;
 
 		try {
-			const msg = await req.em.findOneOrFail(Message, message_id);
+			const msg = await req.em.findOneOrFail(Message, message_id, {strict: true});
 			msg.message = message;
 			await req.em.persistAndFlush(msg);
 			return reply.send(msg);
 		} catch (err) {
-			app.log.error("Failed to update message", err.message);
 			return reply.status(500).send({ message: err.message });
 		}
 	});
 
-	app.delete<{ Body: { message_id: number; password: string } }>("/messages", async (req, reply) => {
-		const { message_id, password } = req.body;
-
-		if (adminPassword !== password) {
-			return reply.status(401).send();
-		}
+	// Delete a specific message -- should we check for admin role here? Probably!
+	app.delete<{ Body: { my_id: number, message_id: number; password: string } }>("/messages", async (req, reply) => {
+		const { my_id, message_id, password } = req.body;
 
 		try {
-			const msgToDelete = await req.em.findOneOrFail(Message, message_id);
-			await req.em.removeAndFlush(msgToDelete);
-			return reply.send();
-		} catch (err) {
-			app.log.error(`Failed to delete message with ID: ${message_id} - `, err.message);
-			return reply.status(500).send({ message: err.message });
-		}
-	});
-
-	app.delete<{ Body: { sender_id: number; password: string } }>(
-		"/messages/all",
-		async (req, reply) => {
-			const { sender_id, password } = req.body;
-
-			console.log("Sender is: ", sender_id);
-
-			if (adminPassword !== password) {
+			const me = await req.em.findOneOrFail(User, my_id, {strict: true});
+			// Check passwords match
+			if (me.password !== password) {
 				return reply.status(401).send();
 			}
 
+			const msgToDelete = await req.em.findOneOrFail(Message, message_id, {strict: true});
+			await req.em.removeAndFlush(msgToDelete);
+			return reply.send();
+		} catch (err) {
+			return reply.status(500).send({ message: err.message });
+		}
+	});
+
+	// Delete all sent messages
+	app.delete<{ Body: { my_id: number, password: string } }>(
+		"/messages/all",
+		async (req, reply) => {
+			const { my_id, password } = req.body;
+
 			try {
-				const senderEntity = await req.em.findOneOrFail(User, sender_id);
-				const msgRepo = req.em.getRepository(Message);
-				const messagesToDelete = await msgRepo.find({ sender: senderEntity });
+				const me = await req.em.findOneOrFail(User, my_id, { strict: true });
 
-				await msgRepo.removeAndFlush(messagesToDelete);
+				// Check passwords match
+				if (me.password !== password) {
+					return reply.status(401).send();
+				}
 
-				return reply.send();
+				// populate our messages_sent relation
+				await me.messages_sent.init();
+				// Remove them all from the collection, which because of orphanRemoval: true, will also delete them fully
+				me.messages_sent.removeAll();
+
+				await req.em.flush();
+
+				return reply.status(200).send();
 			} catch (err) {
-				app.log.error(`Failed to delete all messages: `, err);
 				return reply.status(500).send({ message: err.message });
 			}
 		}
