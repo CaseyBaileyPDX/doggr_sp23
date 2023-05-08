@@ -12,7 +12,7 @@ export enum UserRole {
 }
 
 // https://github.com/TheNightmareX/mikro-orm-soft-delete
-// Yes it's really that easy.
+// Yes, it's really that easy.
 @SoftDeletable(() => User, "deleted_at", () => new Date())
 @Entity({ tableName: "users"})
 export class User extends DoggrBaseEntity {
@@ -47,6 +47,7 @@ export class User extends DoggrBaseEntity {
 	)
 	matched_by!: Collection<Match>;
 
+	// Orphan removal used in our Delete All Sent Messages route to single-step remove via Collection
 	@OneToMany(
 		() => Message,
 		message => message.sender,

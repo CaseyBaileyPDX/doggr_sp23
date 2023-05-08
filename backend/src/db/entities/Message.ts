@@ -9,12 +9,10 @@ import { User } from "./User.js";
 export class Message extends DoggrBaseEntity {
 
 	// The person who performed the match/swiped right
-	// Delete this message if they are deleted
 	@ManyToOne()
 	sender!: Ref<User>;
 
 	// The account whose profile was swiped-right-on
-	// Delete this message if they are deleted
 	@ManyToOne('User')
 	receiver!: Rel<User>;
 

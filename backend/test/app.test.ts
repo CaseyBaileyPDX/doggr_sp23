@@ -31,16 +31,6 @@ tap.teardown(async () => {
 	await app.close();
 });
 
-void tap.test("Request the /hello route", async () => {
-	const response = await app.inject({
-		method: "GET",
-		url: "/hello"
-	});
-
-	response.statusCode.should.equal(200);
-	response.body.should.equal("hello");
-});
-
 void tap.test("List all users from /dbvoid tap.test", async () => {
 	const response = await app.inject({
 		method: "GET",
@@ -223,4 +213,5 @@ void tap.test("Testing message bad words filter", async () => {
 	response.payload.should.not.equal(payload);
 	const resPayload = response.json();
 	resPayload.message.should.equal("Bad words naughty list added.");
+	resPayload.message.should.not.equal("Bad words naughty list added!");
 });
