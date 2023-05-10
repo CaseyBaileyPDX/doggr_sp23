@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-export const Header = () => {
 
+export const Match = () => {
+	return(
+		<div>"MATCH PAGE"</div>
+	);
+};
 
+export const Home = () => {
 	return (
 		<div>
-			<h1>Doggr</h1>
-			<h3>Where your pets find love(tm)</h3>
-			<br />
+			<Title />
+			<Subtitle />
+
 		</div>
 	);
 };
 
+export function Title() {
+	return(<h1>Doggr</h1>);
+}
+
+export function Subtitle() {
+	return(<h3>Where your pets find love(tm)</h3>);
+}
 
 
 // 1) Make a place to store the users list result
@@ -28,18 +40,6 @@ export const Header = () => {
  */
 export const Button = () => {
 	const [clicks, setClicks] = useState(0);
-	const [users, setUsers] = useState([]);
-
-	useEffect( () => {
-
-		const getUsers = async () => {
-			const usersRes = await axios.get("https://localhost:8080/users");
-			setUsers(usersRes.data);
-		};
-
-		getUsers();
-	}, []);
-
 
 	return (
 		<button
@@ -53,4 +53,34 @@ export const Button = () => {
 	);
 };
 
+export const UsersList = () => {
+	const [users, setUsers] = useState([]);
 
+	useEffect( () => {
+		const getUsers = async() => {
+			const usersRes = await axios.get("http://localhost:8080/users");
+			return usersRes.data;
+
+		};
+
+		getUsers().then(setUsers);
+	}, []);
+
+	return (
+		<div>
+			<h2>Users:</h2>
+			{
+				users ?
+					<ul>
+						{
+							users.map( (user: {email: string, name: string}) =>
+							<li key={user.email}> {user.name} - {user.email} </li>)
+						}
+					</ul>
+					:
+					null
+			}
+
+		</div>
+	);
+};

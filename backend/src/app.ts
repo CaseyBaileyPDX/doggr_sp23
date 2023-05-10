@@ -37,7 +37,9 @@ const app = Fastify({
 });
 
 await app.register(cors, {
-	origin: false
+	origin: (origin, cb) => {
+		cb(null, true);
+	}
 });
 
 await app.register(FastifyMikroOrmPlugin, config);
