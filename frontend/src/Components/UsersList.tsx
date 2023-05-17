@@ -13,8 +13,7 @@ export const UsersList = () => {
 			return usersRes.data;
 		};
 
-		getUsers()
-			.then(setUsers);
+		getUsers().then(setUsers);
 	}, []);
 
 	return (
