@@ -137,4 +137,13 @@ export function UserRoutesInit(app: FastifyInstance) {
 				.send(err);
 		}
 	});
+
+	app.get("/profile", async(req, reply) => {
+
+		const userRepo = req.em.getRepository(User);
+		const totalCount = await userRepo.count();
+		const randomOffset = Math.floor(Math.random() * totalCount);
+		const randomEntity = await userRepo.findOne({}, {offset: randomOffset});
+		reply.send(randomEntity);
+	});
 }

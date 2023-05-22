@@ -6,6 +6,7 @@ export const AuthContext = createContext<AuthContextProps | null>(null);
 
 export type AuthContextProps = {
 	token: string | null;
+	userId: number;
 	handleLogin: (email: string, password: string) => Promise<boolean>;
 	handleLogout: () => void;
 };
@@ -29,16 +30,19 @@ const updateAxios = async (token: string) => {
 };
 
 const initialToken = getTokenFromStorage();
+let initialUserId;
 
 if (!(initialToken == null)) {
 	console.log("Updating axios with token: ", initialToken);
 	await updateAxios(initialToken);
+	initialUserId = getUserIdFromToken(initialToken);
 }
 
 export const AuthProvider = ({ children }: any) => {
 	const navigate = useNavigate();
 
 	const [token, setToken] = useState(initialToken);
+	const [userId, setUserId] = useState(initialUserId);
 
 	const handleLogin = async (email: string, password: string) => {
 		console.log("In handleLogin with ", email, password);
@@ -65,6 +69,7 @@ export const AuthProvider = ({ children }: any) => {
 	const saveToken = (thetoken) => {
 		console.log(thetoken);
 		setToken(thetoken);
+		setUserId(getUserIdFromToken(thetoken));
 		localStorage.setItem("token", JSON.stringify(thetoken));
 	};
 
@@ -72,6 +77,7 @@ export const AuthProvider = ({ children }: any) => {
 		<AuthContext.Provider
 			value={{
 				token,
+				userId,
 				handleLogin,
 				handleLogout,
 			}}
@@ -123,4 +129,9 @@ export function getPayloadFromToken(token: string) {
 	const payload = JSON.parse(jsonPayload);
 	console.log(payload);
 	return payload;
+}
+
+function getUserIdFromToken(token: string) {
+	const payload = getPayloadFromToken(token);
+	return payload.userId;
 }

@@ -1,15 +1,13 @@
+import { ProfileType } from "@/DoggrTypes.ts";
 import { useEffect } from "react";
 
-export type ProfileProps = {
-	id: number;
-	imgUri: string;
-	name: string;
+export type ProfileProps = ProfileType & {
 	onLikeButtonClick: () => void;
 	onPassButtonClick: () => void;
 };
 
 export function Profile(props: ProfileProps) {
-	const { imgUri, name, onLikeButtonClick, onPassButtonClick } = props;
+	const { imgUri, name, petType, onLikeButtonClick, onPassButtonClick } = props;
 
 	useEffect(() => {
 		console.log("Profile Rerendered.");
@@ -19,6 +17,7 @@ export function Profile(props: ProfileProps) {
 		<div>
 			<img src={imgUri} alt="Profile of pet" />
 			<h2>{name}</h2>
+			<div>Pet Type: {petType}</div>
 			<div>
 				<button onClick={onPassButtonClick}>Pass</button>
 				<button onClick={onLikeButtonClick}>Like</button>

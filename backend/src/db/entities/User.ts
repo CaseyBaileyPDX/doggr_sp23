@@ -5,6 +5,7 @@ import { Match } from "./Match.js";
 
 import { Enum } from "@mikro-orm/core";
 import { Message } from "./Message.js";
+import { Pass } from "./Pass.js";
 
 export enum UserRole {
 	ADMIN = 'Admin',
@@ -32,6 +33,9 @@ export class User extends DoggrBaseEntity {
 	@Enum(() => UserRole)
 	role!: UserRole; // string enum
 
+	@Property({fieldName: 'img_uri'})
+	imgUri!: string;
+
 	// Note that these DO NOT EXIST in the database itself!
 	@OneToMany(
 		() => Match,
@@ -46,6 +50,20 @@ export class User extends DoggrBaseEntity {
 		{cascade: [Cascade.PERSIST, Cascade.REMOVE]}
 	)
 	matched_by!: Collection<Match>;
+
+	@OneToMany(
+		() => Pass,
+		pass => pass.owner,
+		{cascade: [Cascade.PERSIST, Cascade.REMOVE]}
+	)
+	passes!: Collection<Pass>;
+
+	@OneToMany(
+		() => Match,
+		pass => pass.matchee,
+		{cascade: [Cascade.PERSIST, Cascade.REMOVE]}
+	)
+	passed_by!: Collection<Pass>;
 
 	// Orphan removal used in our Delete All Sent Messages route to single-step remove via Collection
 	@OneToMany(

@@ -16,3 +16,15 @@ export class DoggrBaseEntity extends BaseEntity<DoggrBaseEntity, "id"> {
 	@Property({ nullable: true })
 	deleted_at?: Date;
 }
+
+@SoftDeletable(() => DoggrCompositeEntity, "deleted_at", () => new Date())
+export class DoggrCompositeEntity {
+	@Property()
+	created_at = new Date();
+
+	@Property({onUpdate: () => new Date()})
+	updated_at = new Date();
+
+	@Property({ nullable: true })
+	deleted_at?: Date;
+}
