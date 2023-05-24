@@ -50,8 +50,6 @@ export const Match = () => {
 
 	return (
 		<>
-			<div>"MATCH PAGE"</div>
-			<p> User logged in as {auth.token}</p>
 			{profile}
 		</>
 	);

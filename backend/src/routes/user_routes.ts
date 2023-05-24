@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SOFT_DELETABLE_FILTER } from "mikro-orm-soft-delete";
 import { User, UserRole } from "../db/entities/User.js";
+import { UploadFileToMinio } from "../plugins/minio.js";
 import { ICreateUsersBody, IUpdateUsersBody } from "../types.js";
 
 export function UserRoutesInit(app: FastifyInstance) {
@@ -25,15 +26,25 @@ export function UserRoutesInit(app: FastifyInstance) {
 	// User CRUD
 	// Refactor note - We DO use email still for creation!  We can't know the ID yet
 	app.post<{ Body: ICreateUsersBody }>("/users", async (req, reply) => {
-		const { name, email, password, petType } = req.body;
 
 		try {
+			const data = await req.file();
+
+
+			const body = Object.fromEntries(
+				// @ts-ignore
+				Object.keys(data.fields).map( (key) => [key, data.fields[key].value])
+			);
+			const { name, email, password, petType } = body;
+			await UploadFileToMinio(data);
+
 			const hashedPw = await bcrypt.hash(password, 10);
 			const newUser = await req.em.create(User, {
 				name,
 				email,
 				password: hashedPw,
 				petType,
+				imgUri: data.filename,
 				// We'll only create Admins manually!
 				role: UserRole.USER
 			});

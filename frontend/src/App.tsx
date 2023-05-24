@@ -4,14 +4,14 @@ import { Match } from "@/Components/Match.tsx";
 import { DoggrRouter } from "@/DoggrRoutes.tsx";
 import { AuthProvider } from "@/Services/Auth.tsx";
 import { Link, Route, Routes, Router, BrowserRouter } from "react-router-dom";
-import "@css/App.css";
+import "@css/DoggrStyles.css";
 
 // This is our base React Component
 export function App() {
 	return (
 		<BrowserRouter>
 			<AuthProvider>
-				<div className="App">
+				<div className="App doggr">
 					<DoggrRouter/>
 				</div>
 			</AuthProvider>
