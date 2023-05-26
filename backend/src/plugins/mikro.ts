@@ -1,7 +1,7 @@
-import {MikroORM, Options} from "@mikro-orm/core";
-import {EntityManager} from "@mikro-orm/postgresql";
+import { MikroORM, Options } from "@mikro-orm/core";
+import { EntityManager } from "@mikro-orm/postgresql";
 
-import type {FastifyPluginAsync} from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 
 // A type that represents deeply nested structure (A value inside a promise) and extracts (safely) the inner value
@@ -9,23 +9,26 @@ import fp from "fastify-plugin";
 export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 
 type FastifyMikroOrmOptions = {
-	forkOnRequest?: boolean
-}
+	forkOnRequest?: boolean;
+};
 
 export type MikroORMPluginOptions = Options & FastifyMikroOrmOptions;
 
-declare module 'fastify' {
+declare module "fastify" {
 	interface FastifyInstance {
 		db: Awaited<ReturnType<(typeof MikroORM)["init"]>>;
 	}
 
 	interface FastifyRequest {
-		db: Awaited<ReturnType<(typeof MikroORM)["init"]>>,
+		db: Awaited<ReturnType<(typeof MikroORM)["init"]>>;
 		em: EntityManager | undefined;
 	}
 }
 
-export const fastifyMikroORMCore: FastifyPluginAsync<MikroORMPluginOptions> = async function (fastify, options) {
+export const fastifyMikroORMCore: FastifyPluginAsync<MikroORMPluginOptions> = async function (
+	fastify,
+	options
+) {
 	if (options.forkOnRequest === undefined) {
 		options.forkOnRequest = true;
 	}

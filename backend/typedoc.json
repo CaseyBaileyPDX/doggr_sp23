@@ -1,0 +1,6 @@
+{
+  "entryPoints": ["src/"],
+  "out": "doc",
+  "exclude": ["**/{migrations,test}/*.ts", "**/mikro-orm.config.ts"],
+  "entryPointStrategy": "expand"
+}
