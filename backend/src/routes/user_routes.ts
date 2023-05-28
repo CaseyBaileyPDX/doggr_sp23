@@ -157,4 +157,5 @@ export function UserRoutesInit(app: FastifyInstance) {
 		const randomEntity = await userRepo.findOne({}, {offset: randomOffset});
 		reply.send(randomEntity);
 	});
+
 }

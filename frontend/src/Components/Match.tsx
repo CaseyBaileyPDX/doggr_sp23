@@ -20,6 +20,7 @@ export const Match = () => {
 
 	useEffect(() => {
 		fetchProfile();
+		console.log(currentProfile)
 	}, []);
 
 	const onLikeButtonClick = () => {

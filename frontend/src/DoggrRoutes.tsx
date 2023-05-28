@@ -7,6 +7,7 @@ import { ProtectedRoute } from "@/Components/ProtectedRoute.tsx";
 import { useAuth } from "@/Services/Auth.tsx";
 import { Link, Route, Routes } from "react-router-dom";
 import "@css/DoggrStyles.css";
+import { Message } from "./Components/Message";
 
 export function DoggrRouter() {
 	const auth = useAuth();
@@ -39,6 +40,7 @@ export function DoggrRouter() {
 				<Route path="/create" element={<CreateProfile/>}/>
 				<Route path="/login" element={<Login />} />
 				<Route path="/logout" element={<Logout />} />
+				<Route path="/message" element = {<ProtectedRoute><Message/></ProtectedRoute>} />
 			</Routes>
 		</div>
 	);
