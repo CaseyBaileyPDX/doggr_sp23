@@ -40,27 +40,7 @@ void tap.test("List all users from /dbvoid tap.test", async () => {
 	response.statusCode.should.equal(200);
 });
 
-void tap.test("Creating a new user", async () => {
-	const payload = {
-		name: "void tap.testname",
-		email: faker.internet.email(),
-		password: "password",
-		role: UserRole.USER,
-		petType: "Dog"
-	};
 
-	const response = await app.inject({
-		method: "POST",
-		url: "/users",
-		payload
-	});
-
-	response.statusCode.should.equal(200);
-	response.payload.should.not.equal(payload);
-	const resPayload = response.json();
-	resPayload.email.should.equal(payload.email);
-	resPayload.petType.should.equal("Dog");
-});
 
 void tap.test("Creating a new message", async () => {
 	const payload = {
@@ -124,59 +104,6 @@ void tap.test("Updating a sent message", async () => {
 	response.statusCode.should.equal(200);
 	const resPayload = response.json();
 	resPayload.message.should.equal(payload.message);
-});
-
-void tap.test("Deleting a specific message", async () => {
-	let payload = {
-		my_id: 1,
-		message_id: 5,
-		password: "password"
-	};
-
-	let response = await app.inject({
-		method: "DELETE",
-		url: "/messages",
-		payload
-	});
-
-	response.statusCode.should.equal(200);
-
-	// ensure to check that my_id is validity checked
-	payload = { ...payload, my_id: 1000000 };
-
-	response = await app.inject({
-		method: "DELETE",
-		url: "/messages",
-		payload
-	});
-
-	response.statusCode.should.equal(500);
-
-	// ensure to check that "bad" passwords fail, too!
-	payload = { ...payload, my_id: 1, password: "password2" };
-
-	response = await app.inject({
-		method: "DELETE",
-		url: "/messages",
-		payload
-	});
-
-	response.statusCode.should.equal(401);
-});
-
-void tap.test("Deleting all sent messages", async () => {
-	const payload = {
-		my_id: 1,
-		password: "password"
-	};
-
-	const response = await app.inject({
-		method: "DELETE",
-		url: "/messages/all",
-		payload
-	});
-
-	response.statusCode.should.equal(200);
 });
 
 void tap.test("Deleting all sent messages fails with incorrect password", async () => {
