@@ -4,7 +4,9 @@
     "transpiler": "ts-node/transpilers/swc-experimental"
   },
   "exclude": [
-    "test/**/*"
+    "test/**/*",
+    "build/**/*",
+    "doc/**/*"
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */

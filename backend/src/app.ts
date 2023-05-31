@@ -41,7 +41,8 @@ const app = Fastify({
 await app.register(cors, {
 	origin: (origin, cb) => {
 		cb(null, true);
-	}
+	},
+	methods: ['GET','POST','PUT','DELETE','PATCH','SEARCH'],
 });
 
 await app.register(multipart);
