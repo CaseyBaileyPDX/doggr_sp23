@@ -43,8 +43,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          ref: w9planning # REMOVE LATER FOR CLASS
+        #with:
+        #  ref: w9planning # REMOVE LATER FOR CLASS
 
       - name: Install Node.js
         uses: actions/setup-node@v3
