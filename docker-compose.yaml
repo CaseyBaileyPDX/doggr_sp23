@@ -16,7 +16,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U doggr"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 25
 
   minio:
     container_name: minio
@@ -32,6 +32,11 @@ services:
       - MINIO_SERVER_SECRET_KEY=minioPass
     volumes:
       - minio_data:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 
   backend:
@@ -50,9 +55,25 @@ services:
       - HOST=0.0.0.0
       - PASSWORD=password
       - NODE_ENV=development
+      - AUTH_SECRET=supersecret219340818092358
+      - MINIO_HOST=minio
+      - MINIO_PORT=9000
     depends_on:
       postgres:
         condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  frontend:
+    container_name: frontend
+    build: ./frontend/
+    restart: always
+    ports:
+      - "88:80" # We need to map here for convenience, so we don't conflict with a potential possible local server
+    environment:
+      - API_HOST=backend
+      - PORT=8080
+
 
 volumes:
   minio_data:

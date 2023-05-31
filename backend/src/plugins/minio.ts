@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
 import {Client} from "minio";
 
 export const minioClient = new Client({
-	endPoint: "127.0.0.1",
+	//endPoint: "127.0.0.1", // FOR LOCAL DEV
+	endPoint: "minio", // FOR DOCKER DEV
 	port: 9000,
 	useSSL: false,
 	accessKey: "minioUser",
