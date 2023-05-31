@@ -55,6 +55,7 @@ jobs:
           version: 7
           run_install: false
 
+      ## This is for caching dependencies between job executions
       - name: Get pnpm dependency directory to put into cache for future jobs
         id: pnpm-cache
         shell: bash
