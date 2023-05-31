@@ -10,13 +10,13 @@ jobs:
   backend_testing:
     runs-on: ubuntu-latest
     env:
-      DB_HOST: postgres
+      DB_HOST: 0.0.0.0
       DB_PORT: 5432
       DB_NAME: doggr
       DB_USER: doggr
       DB_PASS: doggr
+      HOST: localhost
       PORT: 8080
-      HOST: 0.0.0.0
       PASSWORD: password
       NODE_ENV: development
       AUTH_SECRET: supersecret219340818092358
@@ -43,26 +43,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Nodejs
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Install PNPM
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
         with:
           version: 7
           run_install: false
 
-        
+      - name: Get pnpm dependency directory to put into cache for future jobs
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT  
+
+      - uses: actions/cache@v3
+        name: Actually create the Github Actions cache for those dependencies
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-  
+
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run database migrations
+      - name: Run Migrations
         run: pnpm migration:freshSeed
 
-      - name: Run our tests!
+      - name: Run tests
         run: pnpm test
-
-
 
