@@ -6,9 +6,7 @@ import "chai/register-should.js"; // Using Should style
 // @ts-ignore
 import tap from "tap";
 import { MikroORM, ISeedManager } from "@mikro-orm/core";
-import { faker } from "@faker-js/faker";
 import app from "../src/app.js";
-import { UserRole } from "../src/db/entities/User.js";
 import config from "../src/db/mikro-orm.config.js";
 import { DatabaseSeeder } from "../src/db/seeders/DatabaseSeeder.js";
 
@@ -39,8 +37,6 @@ void tap.test("List all users from /dbvoid tap.test", async () => {
 
 	response.statusCode.should.equal(200);
 });
-
-
 
 void tap.test("Creating a new message", async () => {
 	const payload = {

@@ -1,0 +1,150 @@
+name: Doggr CICD
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+  workflow_dispatch:
+
+jobs:
+  backend_testing:
+    runs-on: ubuntu-latest
+    env:
+      DB_HOST: 0.0.0.0
+      DB_PORT: 5432
+      DB_NAME: doggr
+      DB_USER: doggr
+      DB_PASS: doggr
+      HOST: localhost
+      PORT: 8080
+      PASSWORD: password
+      NODE_ENV: development
+      AUTH_SECRET: supersecret219340818092358
+      MINIO_HOST: localhost
+      MINIO_PORT: 9000
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: doggr
+          POSTGRES_PASSWORD: doggr
+        options: >-
+          --health-cmd pg_isready  
+          --health-interval 10s  
+          --health-timeout 5s  
+          --health-retries 25
+        ports:
+          - 5432:5432
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: w9planning # REMOVE LATER FOR CLASS
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm dependency directory to put into cache for future jobs
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT  
+
+      - uses: actions/cache@v3
+        name: Actually create the Github Actions cache for those dependencies
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-  
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run Migrations
+        run: pnpm migration:freshSeed
+
+      - name: Run tests
+        run: pnpm test
+
+#  frontend_testing:
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        working-directory: frontend
+#    env:
+#      VITE_BACKEND_IP: backend
+#      VITE_BACKEND_PORT: 8080
+#    steps:
+#      - uses: actions/checkout@v3
+#        name: Checkout repository master branch
+#
+#      - uses: actions/setup-node@v3
+#        name: Setup Node Environment
+#        with:
+#          node-version: 18
+#
+#      - uses: pnpm/action-setup@v2
+#        name: Install pnpm
+#        id: pnpm-install
+#        with:
+#          version: 7
+#          run_install: false
+#
+#      - name: Get pnpm store directory
+#        id: pnpm-cache
+#        shell: bash
+#        run: |
+#          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+#
+#      - uses: actions/cache@v3
+#        name: Setup pnpm cache
+#        with:
+#          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+#          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-pnpm-store-
+#
+#      - name: Install dependencies
+#        run: pnpm install
+#
+#      - name: Run Tests
+#        run: pnpm test
+
+
+
+#  deploy-to-server:
+#    runs-on: ubuntu-latest
+#    needs: [ frontend_testing, backend_testing ]
+#    steps:
+#      - uses: appleboy/ssh-action@master
+#        with:
+#          # Live site IP address (Normally this would be tied to a domain name like doggr.com)
+#          host: 68.183.25.209
+#          username: kc
+#          # This is explicitly an SSH private key stored inside of Github Repo's "Repository Secrets"
+#          key: ${{ secrets.PRIVATE_KEY }}
+#          # This is intentionally one hideously long line to ensure line ending differences don't screw us anywhere
+#          script: |
+#            cd /home/kc/workspace/
+#            rm -rf ./doggr
+#            git clone https://github.com/CaseyBaileyPDX/doggr_w23_CI.git doggr
+#            cd doggr
+#            docker compose down
+#            docker compose build --no-cache --compress
+#            docker compose up -d
+#
