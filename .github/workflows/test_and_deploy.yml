@@ -91,4 +91,5 @@ jobs:
           ssh_host: 5.78.82.67
           ssh_private_key: ${{ secrets.DOGGR_DEPLOY_PRIVATE_KEY }}
           ssh_user: ${{ secrets.DOGGR_DEPLOY_USER }}
+          docker_compose_filename: docker-compose.yaml
           #docker_compose_prefix: doggr
