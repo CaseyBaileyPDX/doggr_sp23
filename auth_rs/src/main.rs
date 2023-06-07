@@ -34,7 +34,7 @@ async fn run() -> AnyResult<()> {
     let cors = CorsLayer::new().allow_origin(Any);
     let app =  routes().layer(cors).layer(Extension(conn)); // We need routing and handlers
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 3333));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3333));
     info!("Listening on {}", &addr);
 
     axum::Server::bind(&addr)
