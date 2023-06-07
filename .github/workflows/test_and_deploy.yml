@@ -95,7 +95,7 @@ jobs:
             mkdir -p ~/workspace
             cd ~/workspace/   
             rm -rf ./doggr  
-            git clone -b w10planning https://github.com/CaseyBaileyPDX/doggr_w23_CI.git doggr  
+            git clone -b w10planning https://github.com/CaseyBaileyPDX/doggr_sp23.git doggr  
             cd doggr  
             docker compose down  
             docker compose build --no-cache --compress  
