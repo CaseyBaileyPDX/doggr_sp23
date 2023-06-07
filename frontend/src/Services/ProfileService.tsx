@@ -9,6 +9,7 @@ export const ProfileService = {
 
 	async fetchProfile(id: number) {
 		const profile = await httpClient.search("/users", {id});
+		console.log("hi");
 		return profile.data;
 	}
 
