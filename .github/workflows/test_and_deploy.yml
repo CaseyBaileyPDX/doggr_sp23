@@ -2,9 +2,9 @@ name: Doggr CICD
 
 on:
   push:
-    branches: [master, develop, w10planning]
+    branches: [master, develop]
   pull_request:
-    branches: [master, develop, w10planning]
+    branches: [master, develop]
     
 jobs:
   backend_testing:
@@ -140,7 +140,7 @@ jobs:
             mkdir -p ~/workspace
             cd ~/workspace/
             rm -rf ./doggr
-            git clone -b w10planning --depth=1 https://github.com/CaseyBaileyPDX/doggr_sp23.git doggr  # Clone the latest
+            git clone --depth=1 https://github.com/CaseyBaileyPDX/doggr_sp23.git doggr  # Clone the latest
             cd doggr
             docker compose down
             docker compose build --no-cache --compress
