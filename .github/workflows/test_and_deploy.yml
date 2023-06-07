@@ -79,3 +79,16 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: alex-ac/github-action-ssh-docker-compose@master
+        name: Docker-Compose Remote Deployment
+        with:
+          ssh_host: 5.78.82.67
+          ssh_private_key: ${{ secrets.EXAMPLE_COM_SSH_PRIVATE_KEY }}
+          ssh_user: ${{ secrets.EXAMPLE_COM_SSH_USER }}
+          #docker_compose_prefix: doggr
