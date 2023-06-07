@@ -1,20 +1,31 @@
 import { Home } from "@/Components/HomePage.tsx";
 import { Login } from "@/Components/Login.tsx";
-import { Match } from "@/Components/Match.tsx";
+import { MatchPage } from "@/Components/MatchPage.tsx";
 import { DoggrRouter } from "@/DoggrRoutes.tsx";
 import { AuthProvider } from "@/Services/Auth.tsx";
+import { Suspense } from "react";
 import { Link, Route, Routes, Router, BrowserRouter } from "react-router-dom";
+import { RecoilRoot, atom, selector, useRecoilState, useRecoilValue } from "recoil";
+import { ErrorBoundary } from "react-error-boundary";
 import "@css/DoggrStyles.css";
 
 // This is our base React Component
 export function App() {
 	return (
 		<BrowserRouter>
-			<AuthProvider>
-				<div className="App doggr">
-					<DoggrRouter/>
-				</div>
-			</AuthProvider>
+			<RecoilRoot>
+				{/* Catches Recoil errors */}
+				{/*<ErrorBoundary fallback={<div>Something evil this way comes...</div>}>*/}
+					{/* Shows temp loading screen during async fetches */}
+					<Suspense fallback={<div>Loading...</div>}>
+						<AuthProvider>
+							<div className="App doggr">
+								<DoggrRouter />
+							</div>
+						</AuthProvider>
+					</Suspense>
+				{/*</ErrorBoundary>*/}
+			</RecoilRoot>
 		</BrowserRouter>
 	);
 }

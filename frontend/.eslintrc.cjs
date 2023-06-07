@@ -12,6 +12,8 @@ module.exports = {
 	rules: {
 		"react-refresh/only-export-components": "warn",
 		semi: "error",
+
+		"prefer-const": "off",
 		"default-param-last": "error",
 		"newline-per-chained-call": "error",
 		"no-return-await": "error",

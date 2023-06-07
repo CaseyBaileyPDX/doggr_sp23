@@ -1,6 +1,6 @@
 version: '3'
 
-services:  
+services:
   postgres:
     container_name: postgres
     image: postgres:15-alpine
@@ -14,7 +14,7 @@ services:
       - POSTGRES_PASSWORD=doggr
       - POSTGRES_DB=doggr
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U doggr"]
+      test: [ "CMD-SHELL", "pg_isready -U doggr" ]
       interval: 10s
       timeout: 5s
       retries: 25
@@ -34,7 +34,7 @@ services:
     volumes:
       - minio_data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 10s
       timeout: 5s
       retries: 25
@@ -70,10 +70,30 @@ services:
     build: ./frontend/
     restart: always
     ports:
-      - "88:80"
+      - "80:80"
     environment:
       - API_HOST=backend
       - PORT=8080
+      - MINIO_HOST=minio
+      - MINIO_PORT=9000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+#  auth_rs:
+#    container_name: auth_rs
+#    build: ./auth_rs/
+#    restart: always
+#    ports:
+#      - "3333:3333"
+#    environment:
+#      - DATABASE_URL=postgres://doggr:doggr@postgres/doggr
+#      - AUTH_SECRET=superSecret
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
 
 volumes:
   minio_data:

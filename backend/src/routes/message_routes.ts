@@ -1,3 +1,4 @@
+import { wrap } from "@mikro-orm/core";
 import { FastifyInstance } from "fastify";
 import { Message } from "../db/entities/Message.js";
 import { User } from "../db/entities/User.js";
@@ -87,6 +88,50 @@ export function MessageRoutesInit(app: FastifyInstance) {
 			return reply.status(500).send({ message: err.message });
 		}
 	});
+
+	app.search<{ Body: { id: number } }>("/messages/all", async (req, reply) => {
+		const { id: id } = req.body;
+
+
+
+		async function getUserMessages(id: number) {
+			// Assuming em is your initialized MikroORM EntityManager
+
+			const user = await req.em.getReference(User, id);
+			console.log(user);
+			// Fetching all messages sent by the user
+			const sentMessages = await req.em.find(Message, { sender: user}, {populate: ["receiver"]});
+
+			// Fetching all messages received by the user
+			const receivedMessages = await req.em.find(Message, { receiver: user }, {populate: ["sender"]});
+
+			let sentWithReceiverProfile = sentMessages.map( message => {
+				const message_text = message.message;
+				const receiver: User = message.receiver;
+				return [message_text, receiver];
+			});
+
+			let receivedWithSentProfile = receivedMessages.map(message => {
+				const message_text = message.message;
+				// @ts-ignore Typescript is simply wrong on this one because Mikro's typedec isn't complex enough
+				let sender: User = message.sender;
+				return [message_text, sender]
+			})
+
+			return {sent: sentWithReceiverProfile, received: receivedWithSentProfile};
+		}
+
+
+		try {
+			const messages = await getUserMessages(id);
+			console.log(messages);
+			return reply.send(messages);
+		} catch (err) {
+			console.log(err);
+			return reply.status(500).send({ message: err.message });
+		}
+	});
+
 
 	app.put<{ Body: { message_id: number; message: string } }>("/messages", async (req, reply) => {
 		const { message_id, message } = req.body;

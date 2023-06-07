@@ -6,27 +6,37 @@ import { render, fireEvent, screen } from "@testing-library/react";
 
 // add custom jest matchers from jest-dom
 import "@testing-library/jest-dom";
-import { App } from "../src/App.js";
-import { Login } from "../src/Components/Login.js";
+import { MemoryRouter } from "react-router-dom";
+import { CreateProfile } from "../src/Components/CreateProfile.js";
 
-test("Math.sqrt()", () => {
-	expect(Math.sqrt(4)).toBe(2);
-	expect(Math.sqrt(144)).toBe(12);
-	expect(Math.sqrt(2)).toBe(Math.SQRT2);
-});
+import { Home } from "../src/Components/HomePage.js";
 
-describe("Renders react properly", async() => {
-	it("Should render homepage correctly", async () => {
-		render(<App />);
+ describe("Renders react properly", () => {
+	 test("Math.sqrt()", () => {
+		 expect(Math.sqrt(4))
+			 .toBe(2);
+		 expect(Math.sqrt(144))
+			 .toBe(12);
+		 expect(Math.sqrt(2))
+			 .toBe(Math.SQRT2);
+	 });
 
-		const elem = await screen.queryByText("Doggr");
-		expect(elem).not.toBeNull();
-		expect(elem).toBeVisible();
+	it("Should render homepage correctly", () => {
+
+			render(<Home />);
+
+			const elem = screen.queryByText("Doggr");
+			expect(elem)
+				.not
+				.toBeNull();
+			expect(elem)
+				.toBeVisible();
+
 	});
-});
 
-test("Loads login", async() => {
-	render (<Login />);
-
-	expect(screen.getByLabelText("Password:")).toBeVisible();
+	test("Loads Create Profile", () => {
+			render(<MemoryRouter><CreateProfile /></MemoryRouter>);
+			expect(screen.getByLabelText("Password:"))
+				.toBeVisible();
+	});
 });
