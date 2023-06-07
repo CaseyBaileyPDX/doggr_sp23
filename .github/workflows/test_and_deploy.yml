@@ -90,12 +90,11 @@ jobs:
           username: root
           # This is explicitly an SSH private key stored inside of Github Repo's "Repository Secrets"
           key: ${{ secrets.DOGGR_DEPLOY_PRIVATE_KEY }}
-          # This is intentionally one hideously long line to ensure line ending differences don't screw us anywhere
           script: |
             mkdir -p ~/workspace
             cd ~/workspace/   
             rm -rf ./doggr  
-            git clone -b w10planning https://github.com/CaseyBaileyPDX/doggr_sp23.git doggr  
+            git clone -b w10planning --depth=1 https://github.com/CaseyBaileyPDX/doggr_sp23.git doggr  # Clone the latest 
             cd doggr  
             docker compose down  
             docker compose build --no-cache --compress  
