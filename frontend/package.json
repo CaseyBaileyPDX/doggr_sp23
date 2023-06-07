@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "pnpm vitest",
+    "test": "pnpm vitest run",
     "fmt": "prettier --write .",
     "lint": "eslint . --ext .ts",
     "check": "pnpm fmt && pnpm lint",
