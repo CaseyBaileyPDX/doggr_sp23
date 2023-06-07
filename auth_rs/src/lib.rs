@@ -18,6 +18,12 @@ impl EnvOptions {
 	}
 }
 
+// This is where we state what fields we're going to store in the token payload
+#[derive(Serialize, Deserialize)]
+pub struct Claims {
+	pub email: String,
+}
+
 pub struct JWTKeys {
 	pub encoding: EncodingKey,
 	pub decoding: DecodingKey,
@@ -75,5 +81,45 @@ impl<E> From<E> for AppError
 {
 	fn from(err: E) -> Self {
 		Self(err.into())
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use jsonwebtoken::{encode, decode, Algorithm, Header, Validation};
+
+	struct MockEnvOptions {
+		pub auth_secret: String,
+	}
+
+	impl MockEnvOptions {
+		pub fn new(secret: String) -> Self {
+			Self {
+				auth_secret: secret,
+			}
+		}
+	}
+
+	#[test]
+	fn test_jwt_keys() {
+		let secret = "super_secret".to_string();
+		let mock_options = MockEnvOptions::new(secret.clone());
+		let jwt_keys = JWTKeys {
+			encoding: EncodingKey::from_secret(secret.as_bytes()),
+			decoding: DecodingKey::from_secret(secret.as_bytes()),
+		};
+
+		let claims = serde_json::json!({
+            "sub": "1234567890",
+            "name": "John Doe",
+            "admin": true
+        });
+
+		let token = encode(&Header::default(), &claims, &jwt_keys.encoding).unwrap();
+
+		let token_data = decode::<serde_json::Value>(&token, &jwt_keys.decoding, &Validation::new(Algorithm::HS256)).unwrap();
+
+		assert_eq!(token_data.claims, claims);
 	}
 }

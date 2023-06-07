@@ -8,21 +8,25 @@ use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 
 use auth_rs::EnvOptions;
-use axum::{Extension, ServiceExt};
+use axum::{Extension};
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
-use tracing::log::{info, error};
-use tracing::trace;
+use tracing::log::{info, trace};
+
 use tracing_subscriber;
 use crate::routes::routes;
 
-#[tokio:main]
-fn main() {
+#[tokio::main]
+async fn main() -> AnyResult<()> {
+    // Just like javascript!
     dotenv().ok();
+    // This inits our logging
     tracing_subscriber::fmt::init();
-    info!("This is an info log");
-    error!("This is an error log");
+    trace!("Application initialized.");
 
+    // This runs our listen server
+    run().await.unwrap();
+    Ok(())
 }
 
 async fn run() -> AnyResult<()> {
@@ -30,7 +34,7 @@ async fn run() -> AnyResult<()> {
     let cors = CorsLayer::new().allow_origin(Any);
     let app =  routes().layer(cors).layer(Extension(conn)); // We need routing and handlers
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3333));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3333));
     info!("Listening on {}", &addr);
 
     axum::Server::bind(&addr)
