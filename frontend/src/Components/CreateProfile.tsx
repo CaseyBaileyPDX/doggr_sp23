@@ -1,5 +1,6 @@
 import { httpClient } from "@/Services/HttpClient.tsx";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export enum SubmissionStatus {
 	NotSubmitted,
@@ -15,6 +16,7 @@ export const CreateProfile = () => {
 	const [password, setPassword] = useState("");
 	const [petType, setPetType] = useState("");
 	const [submitted, setSubmitted] = useState(SubmissionStatus.NotSubmitted);
+	const navigate = useNavigate();
 
 	const onFileChange = ev => {
 		setSelectedFile(ev.target.files[0]);
@@ -45,6 +47,9 @@ export const CreateProfile = () => {
 				} else {
 					setSubmitted(SubmissionStatus.SubmitFailed);
 				}
+			})
+			.then(() => {
+				navigate("/login");
 			});
 	};
 
