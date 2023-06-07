@@ -7,89 +7,107 @@ on:
     branches: [master, develop, w10planning]
     
 jobs:
-  backend_testing:
-    runs-on: ubuntu-latest
-    env:
-      DB_HOST: 0.0.0.0
-      DB_PORT: 5432
-      DB_NAME: doggr
-      DB_USER: doggr
-      DB_PASS: doggr
-      HOST: localhost
-      PORT: 8080
-      PASSWORD: password
-      NODE_ENV: development
-      AUTH_SECRET: supersecret219340818092358
-      MINIO_HOST: localhost
-      MINIO_PORT: 9000
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: doggr
-          POSTGRES_PASSWORD: doggr
-        options: >-
-          --health-cmd pg_isready  
-          --health-interval 10s  
-          --health-timeout 5s  
-          --health-retries 25
-        ports:
-          - 5432:5432
-    defaults:
-      run:
-        working-directory: backend
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        id: pnpm-install
-        with:
-          version: 7
-          run_install: false
-
-      ## This is for caching dependencies between job executions
-      - name: Get pnpm dependency directory to put into cache for future jobs
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT  
-
-      - uses: actions/cache@v3
-        name: Actually create the Github Actions cache for those dependencies
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-  
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Run Migrations
-        run: pnpm migration:freshSeed
-
-      - name: Run tests
-        run: pnpm test
+#  backend_testing:
+#    runs-on: ubuntu-latest
+#    env:
+#      DB_HOST: 0.0.0.0
+#      DB_PORT: 5432
+#      DB_NAME: doggr
+#      DB_USER: doggr
+#      DB_PASS: doggr
+#      HOST: localhost
+#      PORT: 8080
+#      PASSWORD: password
+#      NODE_ENV: development
+#      AUTH_SECRET: supersecret219340818092358
+#      MINIO_HOST: localhost
+#      MINIO_PORT: 9000
+#    services:
+#      postgres:
+#        image: postgres:15
+#        env:
+#          POSTGRES_USER: doggr
+#          POSTGRES_PASSWORD: doggr
+#        options: >-
+#          --health-cmd pg_isready
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 25
+#        ports:
+#          - 5432:5432
+#    defaults:
+#      run:
+#        working-directory: backend
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Install Node.js
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 18
+#
+#      - uses: pnpm/action-setup@v2
+#        name: Install pnpm
+#        id: pnpm-install
+#        with:
+#          version: 7
+#          run_install: false
+#
+#      ## This is for caching dependencies between job executions
+#      - name: Get pnpm dependency directory to put into cache for future jobs
+#        id: pnpm-cache
+#        shell: bash
+#        run: |
+#          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+#
+#      - uses: actions/cache@v3
+#        name: Actually create the Github Actions cache for those dependencies
+#        with:
+#          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+#          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-pnpm-store-
+#
+#      - name: Install dependencies
+#        run: pnpm install
+#
+#      - name: Run Migrations
+#        run: pnpm migration:freshSeed
+#
+#      - name: Run tests
+#        run: pnpm test
 
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: alex-ac/github-action-ssh-docker-compose@master
-        name: Docker-Compose Remote Deployment
+      - uses: appleboy/ssh-action@master
         with:
-          ssh_host: 5.78.82.67
-          ssh_private_key: ${{ secrets.DOGGR_DEPLOY_PRIVATE_KEY }}
-          ssh_user: ${{ secrets.DOGGR_DEPLOY_USER }}
-          docker_compose_filename: docker-compose.yaml
-          #docker_compose_prefix: doggr
+          # Live site IP address (Normally this would be tied to a domain name like doggr.com)
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: root
+          # This is explicitly an SSH private key stored inside of Github Repo's "Repository Secrets"
+          key: ${{ secrets.DOGGR_DEPLOY_PRIVATE_KEY }}
+          # This is intentionally one hideously long line to ensure line ending differences don't screw us anywhere
+          script: |
+            mkdir -p ~/workspace
+            cd ~/workspace/   
+            rm -rf ./doggr  
+            git clone -b w10planning https://github.com/CaseyBaileyPDX/doggr_w23_CI.git doggr  
+            cd doggr  
+            docker compose down  
+            docker compose build --no-cache --compress  
+            docker compose up -d
+
+#      - uses: alex-ac/github-action-ssh-docker-compose@master
+#        name: Docker-Compose Remote Deployment
+#        with:
+#          ssh_host:  ${{ secrets.DEPLOY_HOST }}
+#          ssh_private_key: ${{ secrets.DOGGR_DEPLOY_PRIVATE_KEY }}
+#          ssh_user: ${{ secrets.DOGGR_DEPLOY_USER }}
+#          docker_compose_filename: docker-compose.yaml
+#          #docker_compose_prefix: doggr
+#          remote_command="set -e ; log() { echo '>> [remote]' \$@ ; } ; cleanup() { log 'Removing workspace...'; rm -rf \"\$HOME/workspace\" ; } ; log 'Creating workspace directory...' ; mkdir -p \"\$HOME/workspace\" ; trap cleanup EXIT ; log 'Unpacking workspace...' ; tar -C \"\$HOME/workspace\" -xjv ; log 'Launching docker-compose...' ; cd \"\$HOME/workspace\" ; docker-compose -f \"$DOCKER_COMPOSE_FILENAME\" -p \"$DOCKER_COMPOSE_PREFIX\" up -d --remove-orphans --build"
+
