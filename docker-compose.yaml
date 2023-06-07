@@ -70,7 +70,7 @@ services:
     build: ./frontend/
     restart: always
     ports:
-      - "88:80"
+      - "80:80"
     environment:
       - API_HOST=backend
       - PORT=8080
