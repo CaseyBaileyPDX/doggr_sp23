@@ -20,21 +20,19 @@ test("Math.sqrt()", () => {
 });
 
  describe("Renders react properly", async () => {
-// 	it("Should render homepage correctly", async () => {
-// 		try {
-// 			render(<App />);
-//
-// 			const elem = await screen.queryByText("Doggr");
-// 			expect(elem)
-// 				.not
-// 				.toBeNull();
-// 			expect(elem)
-// 				.toBeVisible();
-// 		} catch (err) {
-// 			console.error(err);
-// 		}
-// 	});
-//
+	it("Should render homepage correctly", async () => {
+
+			render(<App />);
+
+			const elem = screen.queryByText("Doggr");
+			expect(elem)
+				.not
+				.toBeNull();
+			expect(elem)
+				.toBeVisible();
+
+	});
+
 	test("Loads login", async () => {
 		try {
 			render(<MemoryRouter><Login /></MemoryRouter>);
