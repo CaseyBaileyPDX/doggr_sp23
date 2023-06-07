@@ -2,9 +2,9 @@ name: Doggr CICD
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master, develop, w10planning]
   pull_request:
-    branches: [master, develop]
+    branches: [master, develop, w10planning]
     
 jobs:
   backend_testing:
