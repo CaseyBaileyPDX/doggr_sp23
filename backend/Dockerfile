@@ -14,8 +14,6 @@ EXPOSE 8080
 
 RUN pnpm build
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#NOTE WE CANNOT DO {RUN pnpm db:reset} HERE BECAUSE DOCKER WILL NOT CONNECT THE NETWORK AT BUILD TIME!
-#RUN pnpm db:reset
-
+# Seed
+RUN pnpm migration:freshSeed
 CMD ["pnpm", "startProd"]

@@ -15,12 +15,16 @@
     "docs:generate": "rimraf ./doc/ && typedoc --options typedoc.json"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.1",
     "axios": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.9",
     "react-router-dom": "^6.11.1",
+    "recoil": "^0.7.7",
     "rimraf": "^5.0.0",
-    "typedoc": "^0.24.6"
+    "typedoc": "^0.24.6",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.2.0",
