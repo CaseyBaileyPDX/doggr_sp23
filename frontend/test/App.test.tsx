@@ -6,6 +6,7 @@ import { render, fireEvent, screen } from "@testing-library/react";
 
 // add custom jest matchers from jest-dom
 import "@testing-library/jest-dom";
+import { MemoryRouter } from "react-router-dom";
 import { App } from "../src/App.js";
 import { Login } from "../src/Components/Login.js";
 
@@ -26,7 +27,7 @@ describe("Renders react properly", async() => {
 });
 
 test("Loads login", async() => {
-	render (<Login />);
+	render (<MemoryRouter><Login /></MemoryRouter>);
 
 	expect(screen.getByLabelText("Password:")).toBeVisible();
 });
