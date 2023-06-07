@@ -7,22 +7,23 @@ import { render, fireEvent, screen } from "@testing-library/react";
 // add custom jest matchers from jest-dom
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import { App } from "../src/App.js";
-import { Login } from "../src/Components/Login.js";
+import { CreateProfile } from "../src/Components/CreateProfile.js";
 
-test("Math.sqrt()", () => {
-	expect(Math.sqrt(4))
-		.toBe(2);
-	expect(Math.sqrt(144))
-		.toBe(12);
-	expect(Math.sqrt(2))
-		.toBe(Math.SQRT2);
-});
+import { Home } from "../src/Components/HomePage.js";
 
- describe("Renders react properly", async () => {
-	it("Should render homepage correctly", async () => {
+ describe("Renders react properly", () => {
+	 test("Math.sqrt()", () => {
+		 expect(Math.sqrt(4))
+			 .toBe(2);
+		 expect(Math.sqrt(144))
+			 .toBe(12);
+		 expect(Math.sqrt(2))
+			 .toBe(Math.SQRT2);
+	 });
 
-			render(<App />);
+	it("Should render homepage correctly", () => {
+
+			render(<Home />);
 
 			const elem = screen.queryByText("Doggr");
 			expect(elem)
@@ -33,15 +34,9 @@ test("Math.sqrt()", () => {
 
 	});
 
-	test("Loads login", async () => {
-		try {
-			render(<MemoryRouter><Login /></MemoryRouter>);
-
+	test("Loads Create Profile", () => {
+			render(<MemoryRouter><CreateProfile /></MemoryRouter>);
 			expect(screen.getByLabelText("Password:"))
 				.toBeVisible();
-		} catch (err) {
-			console.error(err);
-		}
-
 	});
 });
