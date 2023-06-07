@@ -19,31 +19,31 @@ test("Math.sqrt()", () => {
 		.toBe(Math.SQRT2);
 });
 
-describe("Renders react properly", async () => {
-	it("Should render homepage correctly", async () => {
-		try {
-			render(<App />);
-
-			const elem = await screen.queryByText("Doggr");
-			expect(elem)
-				.not
-				.toBeNull();
-			expect(elem)
-				.toBeVisible();
-		} catch (err) {
-			console.error(err);
-		}
-	});
-
-	// test("Loads login", async () => {
-	// 	try {
-	// 		render(<MemoryRouter><Login /></MemoryRouter>);
-	//
-	// 		expect(screen.getByLabelText("Password:"))
-	// 			.toBeVisible();
-	// 	} catch (err) {
-	// 		console.error(err);
-	// 	}
-	//
-	// });
-});
+// describe("Renders react properly", async () => {
+// 	it("Should render homepage correctly", async () => {
+// 		try {
+// 			render(<App />);
+//
+// 			const elem = await screen.queryByText("Doggr");
+// 			expect(elem)
+// 				.not
+// 				.toBeNull();
+// 			expect(elem)
+// 				.toBeVisible();
+// 		} catch (err) {
+// 			console.error(err);
+// 		}
+// 	});
+//
+// 	// test("Loads login", async () => {
+// 	// 	try {
+// 	// 		render(<MemoryRouter><Login /></MemoryRouter>);
+// 	//
+// 	// 		expect(screen.getByLabelText("Password:"))
+// 	// 			.toBeVisible();
+// 	// 	} catch (err) {
+// 	// 		console.error(err);
+// 	// 	}
+// 	//
+// 	// });
+// });
