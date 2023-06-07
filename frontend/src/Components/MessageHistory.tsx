@@ -25,7 +25,6 @@ export const MessageHistory = () => {
 			try {
 				const messagesResponse = await httpClient.search("/messages/all", {id: auth.userId});
 				const messages = messagesResponse.data;
-				console.log(messages);
 				setSentMessages(messages.sent);
 				setReceivedMessages(messages.received);
 			} catch (err) {
@@ -53,32 +52,42 @@ export const MessageHistory = () => {
 	};
 
 	const MessageListItem: React.FC<MessageListItemProps> = ({ message, index, direction }) => (
-		<li key={index}>
-			<p>{message[0]}</p>
-			<div className="flex">
-				<p className={"m-2"}>{direction}: {message[1].name}</p>
-				<img src={minioBaseUrl + message[1].imgUri} alt={message[1].name}
-				     style={{ width: "50px", height: "50px" }} />
-				<button onClick={() => onReplyButtonClick(message[1].id)}>Reply</button>
+		<li key={index} className="flex items-center justify-between bg-secondary p-4 rounded-box mb-4">
+			<div>
+				<p className="text-lg">{message[0]}</p>
+				<p className="m-2 text-sm text-neutral-content px-8">{direction}: {message[1].name}</p>
+			</div>
+			<div className="flex items-center">
+				<img
+					src={minioBaseUrl + message[1].imgUri}
+					alt={message[1].name}
+					className="w-12 h-12 rounded-full mr-4"
+				/>
+				<button
+					onClick={() => onReplyButtonClick(message[1].id)}
+					className="btn btn-primary btn-circle"
+				>
+					Reply
+				</button>
 			</div>
 		</li>
 	);
 
 	return (
-		<>
-			<div>Received:</div>
+		<div className={"flex flex-col  justify-center items-center"}>
+			<div className="text-2xl mb-4">Received:</div>
 			<ul>
 				{receivedMessages.map((message, index) =>
 					<MessageListItem key={index} index={index} message={message} direction='From' />
 				)}
 			</ul>
-			<div>Sent:</div>
+			<div className="text-2xl mt-8 mb-4">Sent:</div>
 			<ul>
 				{sentMessages.map((message, index) =>
 					<MessageListItem key={index} index={index} message={message} direction='To' />
 				)}
 			</ul>
-		</>
+		</div>
 	);
 	// return (
 	// 	<>

@@ -27,7 +27,6 @@ httpClient.search = async(path, data) => {
 		url: serverUrl + path,
 		data
 	};
-	console.log(config);
 	return httpClient.request(config);
 
 };

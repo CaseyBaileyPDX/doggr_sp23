@@ -40,7 +40,6 @@ export const CreateProfile = () => {
 
 		httpClient.post("/users", formData, config)
 			.then( (response) => {
-				console.log("Got response from uploading file", response.status);
 				if (response.status === 200) {
 					setSubmitted(SubmissionStatus.SubmitSucceeded);
 				} else {
@@ -50,8 +49,8 @@ export const CreateProfile = () => {
 	};
 
 	return (
-		<div className="flex flex-col items-center bg-slate-700 w-4/5 mx-auto p-5 rounded-box">
-			<h2 className="text-4xl text-blue-600 mb-5">Create Account:</h2>
+		<div className="flex flex-col items-center bg-neutral w-4/5 mx-auto p-5 rounded-box">
+			<h2 className="text-4xl font-bold mb-5">Create Account:</h2>
 			{
 				submitted === SubmissionStatus.SubmitFailed &&
 				<h3 className="text-red-500">CREATING PROFILE FAILED!</h3>
@@ -117,7 +116,7 @@ export const CreateProfile = () => {
 				<label htmlFor="profilepic" className="text-blue-300 mb-2">Upload a profile picture:</label>
 				<input
 					type={"file"}
-					className={"doggrFileUpload input input-bordered"}
+					className={"doggrFileUpload file-input "}
 					id={"profilepic"}
 					name="profilepic"
 					accept={"image/png, image/jpeg"}
@@ -128,7 +127,7 @@ export const CreateProfile = () => {
 			{
 				name != null && password != null && selectedFile != null &&
 				<div>
-					<button className="btn btn-primary btn-circle" onClick={onUploadFile}>Create</button>
+					<button className="btn btn-primary doggrbtn" onClick={onUploadFile}>Create</button>
 				</div>
 			}
 		</div>

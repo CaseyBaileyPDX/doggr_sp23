@@ -30,15 +30,13 @@ export const MessagePage = () => {
 			<Profile />
 			{ submissionError == true &&
 
-				<div className="flex items-center justify-center text-sm text-red-800  w-4/5 mx-auto bg-red-50 dark:bg-slate-800 dark:text-red-400" role="alert">
+				<div className="flex items-center justify-center text-sm text-error-content w-4/5 mx-auto bg-error" role="alert">
 					<span className="font-medium">Danger alert! You tried to send one or more bad words!</span>
 				</div>
 			}
-			<div className="flex items-center justify-center rounded-b-box bg-slate-700 w-4/5 mx-auto space-x-8 pt-3 pb-2">
-
-				<label htmlFor="message" className="text-blue-300 mb-2">Message:</label>
+			<div className="flex items-center justify-center rounded-b-box bg-secondary w-4/5 mx-auto space-x-8 pt-3 pb-2">
 				<input
-					placeholder="Hi..."
+					placeholder="Message..."
 					type="text"
 					id="message"
 					required
@@ -51,7 +49,7 @@ export const MessagePage = () => {
 				{
 					message != null &&
 					<div>
-						<button className="btn btn-primary btn-circle" onClick={onSubmit}>Create</button>
+						<button className="btn btn-primary btn-circle" onClick={onSubmit}>Send</button>
 					</div>
 				}
 			</div>

@@ -5,7 +5,7 @@ export function NavBar() {
 	const auth = useAuth();
 
 	return (
-		<nav className="bg-blue-800 rounded-b shadow-lg mb-4">
+		<nav className="bg-primary rounded-b shadow-lg mb-4">
 			<div className="navbar justify-center">
 				<div className={"navbar-center lg:flex"}>
 					<ul className={"menu menu-horizontal"}>

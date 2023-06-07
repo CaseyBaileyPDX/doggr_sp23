@@ -12,11 +12,10 @@ export function Profile() {
 	const minioUrl = minioBaseUrl + currentProfile.imgUri;
 
 	return (
-		<div className={"flex flex-col items-center rounded-t-box bg-slate-700 w-4/5 mx-auto"}>
+		<div className={"flex flex-col items-center rounded-t-box bg-secondary w-4/5 mx-auto"}>
 			<img className="rounded w-128 h-128 mt-4" src={minioUrl} alt="Profile of pet" />
-			<div className={"text-4xl text-blue-600"}>{currentProfile.name}</div>
-			<div className={"text-2xl text-blue-300"}>Pet Type: {currentProfile.petType}</div>
-
+			<div className={"text-4xl text-accent"}>{currentProfile.name}</div>
+			<div className={"text-2xl text-accent"}>{currentProfile.petType}</div>
 		</div>
 	);
 }
