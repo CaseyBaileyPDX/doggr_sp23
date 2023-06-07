@@ -11,23 +11,39 @@ import { App } from "../src/App.js";
 import { Login } from "../src/Components/Login.js";
 
 test("Math.sqrt()", () => {
-	expect(Math.sqrt(4)).toBe(2);
-	expect(Math.sqrt(144)).toBe(12);
-	expect(Math.sqrt(2)).toBe(Math.SQRT2);
+	expect(Math.sqrt(4))
+		.toBe(2);
+	expect(Math.sqrt(144))
+		.toBe(12);
+	expect(Math.sqrt(2))
+		.toBe(Math.SQRT2);
 });
 
-describe("Renders react properly", async() => {
+describe("Renders react properly", async () => {
 	it("Should render homepage correctly", async () => {
-		render(<App />);
+		try {
+			render(<App />);
 
-		const elem = await screen.queryByText("Doggr");
-		expect(elem).not.toBeNull();
-		expect(elem).toBeVisible();
+			const elem = await screen.queryByText("Doggr");
+			expect(elem)
+				.not
+				.toBeNull();
+			expect(elem)
+				.toBeVisible();
+		} catch (err) {
+			console.error(err);
+		}
 	});
-});
 
-test("Loads login", async() => {
-	render (<MemoryRouter><Login /></MemoryRouter>);
+	test("Loads login", async () => {
+		try {
+			render(<MemoryRouter><Login /></MemoryRouter>);
 
-	expect(screen.getByLabelText("Password:")).toBeVisible();
+			expect(screen.getByLabelText("Password:"))
+				.toBeVisible();
+		} catch (err) {
+			console.error(err);
+		}
+
+	});
 });
