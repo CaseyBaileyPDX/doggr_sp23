@@ -7,8 +7,10 @@ export const ProfileService = {
 		return profile.data;
 	},
 
-	async sendMessage(sender_id: number, receiver_id: number, message: string) {
-		return httpClient.post("/messages", { sender_id, receiver_id, message});
+	async fetchProfile(id: number) {
+		const profile = await httpClient.search("/users", {id});
+		return profile.data;
 	}
+
 };
 

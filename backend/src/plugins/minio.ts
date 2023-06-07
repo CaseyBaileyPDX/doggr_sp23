@@ -10,23 +10,22 @@ export const minioClient = new Client({
 	secretKey: "minioPass",
 })
 
-export const UploadFileToMinio = async(file: any): Promise<boolean> => {
-	let success = false;
-
+export const UploadFileToMinio = async (file: any): Promise<boolean> => {
 	try {
-		await minioClient.putObject("doggr", file.filename, file.file, (error: any, etag: any) => {
-			if (error) {
-				console.log("Minio client saving failed", error);
-				success = false;
-			} else {
-				success = true;
-				console.log("Minio saved file successfully")
-			}
-		})
+		await new Promise((resolve, reject) => {
+			minioClient.putObject('doggr', file.filename, file.file, (error: any, etag: any) => {
+				if (error) {
+					console.log('Minio client saving failed', error);
+					reject(error);
+				} else {
+					console.log('Minio saved file successfully');
+					resolve(etag);
+				}
+			});
+		});
+		return true;
 	} catch (err) {
-		success= false;
 		console.error(err);
+		return false;
 	}
-
-	return success;
-}
+};

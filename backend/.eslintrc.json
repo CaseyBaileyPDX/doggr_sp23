@@ -24,6 +24,7 @@
     "no-return-await": "error",
     "no-console": "off",
     "consistent-return": "warn",
+    "prefer-const": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     // These flip based on dev convenience vs prod safety
     // Change "off" to "error" for prod config

@@ -1,57 +1,118 @@
-import { Profile } from "@/Components/Profile.tsx";
 import { useAuth } from "@/Services/Auth.tsx";
+import { httpClient } from "@/Services/HttpClient.tsx";
 import { ProfileService } from "@/Services/ProfileService.tsx";
 import { profileState } from "@/Services/RecoilState.tsx";
-import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+
+type Message = [string, { id: string, name: string, imgUri: string }];
+type MessageListItemProps = { message: Message, index: number, direction: string };
+
+const minioHost = import.meta.env.MINIO_HOST;
+const minioPort = import.meta.env.MINIO_PORT;
+const minioBaseUrl = "http://" + minioHost + ":" + minioPort + "/doggr/";
 
 export const MessageHistory = () => {
-	const [message, setMessage] = useState<string>("");
-	const [submissionError, setSubmissionError] = useState(false);
+	const [sentMessages, setSentMessages] = useState([]);
+	const [receivedMessages, setReceivedMessages] = useState([]);
 	const auth = useAuth();
-	const currentProfile = useRecoilValue(profileState);
 	const navigate = useNavigate();
+	const setCurrentProfile = useSetRecoilState(profileState);
 
-	const onSubmit = async (ev) => {
-		const sender_id = auth.userId;
-		const receiver_id = currentProfile.id;
-		try {
-			await ProfileService.sendMessage(sender_id, receiver_id, message);
-			// If we succeed, send the user onward to message history
-			navigate("/messagehistory");
-		} catch (err) {
-			setSubmissionError(true);
+	useEffect( () => {
+		async function getAllMessages() {
+			try {
+				const messagesResponse = await httpClient.search("/messages/all", {id: auth.userId});
+				const messages = messagesResponse.data;
+				console.log(messages);
+				setSentMessages(messages.sent);
+				setReceivedMessages(messages.received);
+			} catch (err) {
+				console.error("Error getting sent messages: ", err);
+			}
 		}
+
+		getAllMessages()
+			.catch((error) => console.error("Failed to get messages", error));
+	}, [auth.userId]);
+
+	const onReplyButtonClick = (id: string) => {
+		async function fetchProfile(id: number) {
+			// Fetch the profile based on the ID, e.g., from an API or local data
+			const profile = await ProfileService.fetchProfile(id);
+
+			// Update the Recoil state with the fetched profile
+			setCurrentProfile(profile);
+		}
+
+		// Fetch the profile and then navigate
+		fetchProfile(Number(id))
+			.then(() => navigate("/message"))
+			.catch((error) => console.error("Failed to fetch profile", error));
 	};
+
+	const MessageListItem: React.FC<MessageListItemProps> = ({ message, index, direction }) => (
+		<li key={index}>
+			<p>{message[0]}</p>
+			<div className="flex">
+				<p className={"m-2"}>{direction}: {message[1].name}</p>
+				<img src={minioBaseUrl + message[1].imgUri} alt={message[1].name}
+				     style={{ width: "50px", height: "50px" }} />
+				<button onClick={() => onReplyButtonClick(message[1].id)}>Reply</button>
+			</div>
+		</li>
+	);
 
 	return (
 		<>
-			<Profile />
-
-			<div className="flex items-center justify-center rounded-b-box bg-slate-700 w-4/5 mx-auto space-x-8 pt-3 pb-2">
-				{ submissionError == true &&
-					<div>YOU SAID A BAD WORD</div>
-				}
-				<label htmlFor="message" className="text-blue-300 mb-2">Message:</label>
-				<input
-					placeholder="Hi..."
-					type="text"
-					id="message"
-					required
-					value={ message }
-					onChange={e => setMessage(e.target.value)}
-					name="petType"
-					className="input input-bordered"
-				/>
-
-				{
-					message != null &&
-					<div>
-						<button className="btn btn-primary btn-circle" onClick={onSubmit}>Create</button>
-					</div>
-				}
-			</div>
+			<div>Received:</div>
+			<ul>
+				{receivedMessages.map((message, index) =>
+					<MessageListItem key={index} index={index} message={message} direction='From' />
+				)}
+			</ul>
+			<div>Sent:</div>
+			<ul>
+				{sentMessages.map((message, index) =>
+					<MessageListItem key={index} index={index} message={message} direction='To' />
+				)}
+			</ul>
 		</>
 	);
+	// return (
+	// 	<>
+	// 		<div>Received:</div>
+	// 		<ul>
+	// 			{receivedMessages.map((message, index) =>
+	// 				<li key={index}>
+	// 					<p>{message[0]}</p>
+	// 					<div className="flex">
+	// 						<p className={"m-2"}>From: {message[1].name}</p>
+	// 						<img src={minioBaseUrl + message[1].imgUri} alt={message[1].name}
+	// 						     style={{ width: "50px", height: "50px" }} />
+	// 						<button onClick={() => onReplyButtonClick(message[1].id)}>Reply</button>
+	// 					</div>
+	// 				</li>
+	// 			)}
+	// 		</ul>
+	// 		<div>Sent:</div>
+	// 		<ul>
+	// 			{sentMessages.map((message, index) =>
+	// 				<li key={index}>
+	// 					<p>{message[0]}</p>
+	// 					<div className="flex">
+	// 						<p className={"m-2"}>To: {message[1].name}</p>
+	// 						<img src={minioBaseUrl + message[1].imgUri} alt={message[1].name}
+	// 						     style={{ width: "50px", height: "50px" }} />
+	// 						<button onClick={() => onReplyButtonClick(message[1].id)}>Reply</button>
+	// 					</div>
+	// 				</li>
+	// 			)}
+	// 		</ul>
+	// 	</>
+	// );
 };
+
+
+

@@ -1,6 +1,6 @@
 import { Profile } from "@/Components/Profile.tsx";
 import { useAuth } from "@/Services/Auth.tsx";
-import { ProfileService } from "@/Services/ProfileService.tsx";
+import { MessageService } from "@/Services/MessageService.tsx";
 import { profileState } from "@/Services/RecoilState.tsx";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
@@ -17,7 +17,7 @@ export const MessagePage = () => {
 		const sender_id = auth.userId;
 		const receiver_id = currentProfile.id;
 		try {
-			await ProfileService.sendMessage(sender_id, receiver_id, message);
+			await MessageService.sendMessage(sender_id, receiver_id, message);
 			// If we succeed, send the user onward to message history
 			navigate("/messagehistory");
 		} catch (err) {
@@ -28,11 +28,14 @@ export const MessagePage = () => {
 	return (
 		<>
 			<Profile />
+			{ submissionError == true &&
 
+				<div className="flex items-center justify-center text-sm text-red-800  w-4/5 mx-auto bg-red-50 dark:bg-slate-800 dark:text-red-400" role="alert">
+					<span className="font-medium">Danger alert! You tried to send one or more bad words!</span>
+				</div>
+			}
 			<div className="flex items-center justify-center rounded-b-box bg-slate-700 w-4/5 mx-auto space-x-8 pt-3 pb-2">
-				{ submissionError == true &&
-					<div>YOU SAID A BAD WORD</div>
-				}
+
 				<label htmlFor="message" className="text-blue-300 mb-2">Message:</label>
 				<input
 					placeholder="Hi..."

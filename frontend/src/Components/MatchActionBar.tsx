@@ -4,13 +4,14 @@ import { PassService } from "@/Services/PassService.tsx";
 import { ProfileService } from "@/Services/ProfileService.tsx";
 import { profileState } from "@/Services/RecoilState.tsx";
 import { useNavigate } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useResetRecoilState, useRecoilState } from "recoil";
 
 
 export function MatchActionBar() {
 	const auth = useAuth();
 	const navigate = useNavigate();
 	const [currentProfile, setCurrentProfile] = useRecoilState(profileState);
+
 
 	const onLikeButtonClick = () => {
 		console.log("In like button click");

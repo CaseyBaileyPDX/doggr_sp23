@@ -2,7 +2,7 @@ import { CreateProfile } from "@/Components/CreateProfile.tsx";
 import { Home } from "@/Components/HomePage.tsx";
 import { Login } from "@/Components/Login.tsx";
 import { Logout } from "@/Components/Logout.tsx";
-import { Match } from "@/Components/Match.tsx";
+import { MatchPage } from "@/Components/MatchPage.tsx";
 import { MessagePage } from "@/Components/Message.tsx";
 import { MessageHistory } from "@/Components/MessageHistory.tsx";
 import { NavBar } from "@/Components/Navigation.tsx";
@@ -18,7 +18,7 @@ export function DoggrRouter() {
 			<NavBar />
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route path="/match" element={<ProtectedRoute><Match /></ProtectedRoute>} />
+				<Route path="/match" element={<ProtectedRoute><MatchPage /></ProtectedRoute>} />
 				<Route path="/create" element={<CreateProfile/>}/>
 				<Route path={"/message"} element={<MessagePage/>}/>
 				<Route path={"/messagehistory"} element={<MessageHistory/>}/>

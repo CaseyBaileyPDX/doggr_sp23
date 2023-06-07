@@ -1,6 +1,6 @@
 import { Home } from "@/Components/HomePage.tsx";
 import { Login } from "@/Components/Login.tsx";
-import { Match } from "@/Components/Match.tsx";
+import { MatchPage } from "@/Components/MatchPage.tsx";
 import { DoggrRouter } from "@/DoggrRoutes.tsx";
 import { AuthProvider } from "@/Services/Auth.tsx";
 import { Suspense } from "react";
