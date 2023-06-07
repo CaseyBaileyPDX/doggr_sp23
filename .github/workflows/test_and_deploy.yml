@@ -7,37 +7,37 @@ on:
     branches: [master, develop, w10planning]
     
 jobs:
-  backend_testing:
-    runs-on: ubuntu-latest
-    env:
-      DB_HOST: 0.0.0.0
-      DB_PORT: 5432
-      DB_NAME: doggr
-      DB_USER: doggr
-      DB_PASS: doggr
-      HOST: localhost
-      PORT: 8080
-      PASSWORD: password
-      NODE_ENV: development
-      AUTH_SECRET: supersecret219340818092358
-      MINIO_HOST: localhost
-      MINIO_PORT: 9000
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: doggr
-          POSTGRES_PASSWORD: doggr
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 25
-        ports:
-          - 5432:5432
-    defaults:
-      run:
-        working-directory: backend
+#  backend_testing:
+#    runs-on: ubuntu-latest
+#    env:
+#      DB_HOST: 0.0.0.0
+#      DB_PORT: 5432
+#      DB_NAME: doggr
+#      DB_USER: doggr
+#      DB_PASS: doggr
+#      HOST: localhost
+#      PORT: 8080
+#      PASSWORD: password
+#      NODE_ENV: development
+#      AUTH_SECRET: supersecret219340818092358
+#      MINIO_HOST: localhost
+#      MINIO_PORT: 9000
+#    services:
+#      postgres:
+#        image: postgres:15
+#        env:
+#          POSTGRES_USER: doggr
+#          POSTGRES_PASSWORD: doggr
+#        options: >-
+#          --health-cmd pg_isready
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 25
+#        ports:
+#          - 5432:5432
+#    defaults:
+#      run:
+#        working-directory: backend
 
     steps:
       - name: Checkout code

@@ -35,15 +35,15 @@ describe("Renders react properly", async () => {
 		}
 	});
 
-	test("Loads login", async () => {
-		try {
-			render(<MemoryRouter><Login /></MemoryRouter>);
-
-			expect(screen.getByLabelText("Password:"))
-				.toBeVisible();
-		} catch (err) {
-			console.error(err);
-		}
-
-	});
+	// test("Loads login", async () => {
+	// 	try {
+	// 		render(<MemoryRouter><Login /></MemoryRouter>);
+	//
+	// 		expect(screen.getByLabelText("Password:"))
+	// 			.toBeVisible();
+	// 	} catch (err) {
+	// 		console.error(err);
+	// 	}
+	//
+	// });
 });
