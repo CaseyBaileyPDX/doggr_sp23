@@ -14,6 +14,4 @@ EXPOSE 8080
 
 RUN pnpm build
 
-# Seed
-RUN pnpm migration:freshSeed
 CMD ["pnpm", "startProd"]
