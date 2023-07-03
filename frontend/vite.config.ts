@@ -1,4 +1,6 @@
 import react from "@vitejs/plugin-react-swc";
+import electron from "vite-plugin-electron";
+import renderer from "vite-plugin-electron-renderer";
 import { defineConfig } from "vitest/config";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -9,7 +11,18 @@ const alphabet = Array.from(Array(26), (v, k) => {
 
 export default defineConfig(({ command, mode }) => {
 	return {
-		plugins: [react(), tsconfigPaths()],
+		plugins: [
+			react(),
+			tsconfigPaths(),
+			electron({
+				entry: 'electron/main.ts',
+			}),
+			renderer({
+				resolve: {
+					got: { type: 'esm' },
+				},
+			})
+		],
 		test: {
 			globals: true,
 			environment: "jsdom",
